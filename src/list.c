@@ -24,6 +24,8 @@ link_iter_fwd(struct link *link, size_t n)
 {
 	int i;
 
+	ASSERT(link != NULL);
+
 	for (i = 0; i < n; i++) {
 		if (!link) return NULL;
 		link = link->next;
@@ -37,6 +39,8 @@ link_iter_bwd(struct link *link, size_t n)
 {
 	int i;
 
+	ASSERT(link != NULL);
+
 	for (i = 0; i < n; i++) {
 		if (!link) return NULL;
 		link = link->prev;
@@ -49,6 +53,8 @@ link_iter_bwd(struct link *link, size_t n)
 void
 list_init(struct list *list)
 {
+	ASSERT(list != NULL);
+
 	list->head.prev = NULL;
 	list->head.next = &list->tail;
 	list->tail.prev = &list->head;
@@ -60,7 +66,7 @@ list_free(struct list *list, void (*free_item)(void *), int offset)
 {
 	struct link *item;
 
-	ASSERT(list != NULL);
+	ASSERT(list != NULL && free_item != NULL);
 
 	while (!list_empty(list)) {
 		item = link_pop(list->head.next);

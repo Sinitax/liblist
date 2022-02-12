@@ -96,7 +96,10 @@ list_at(struct list *list, int n)
 {
 	ASSERT(list != NULL);
 
-	return link_iter(list->head.next, n);
+	if (n >= 0)
+		return link_iter_fwd(list->head.next, n);
+	else
+		return link_iter_bwd(&list->tail, -n);
 }
 
 struct link *

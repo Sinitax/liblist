@@ -28,7 +28,7 @@ main(int argc, const char **argv)
 	}
 
 	for (LIST_ITER(&list, iter)) {
-		item = UPCAST(iter, struct arg);
+		item = LINK_UPCAST(iter, struct arg, link);
 		printf("%s\n", item->str);
 	}
 }

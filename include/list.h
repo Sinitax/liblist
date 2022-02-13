@@ -2,14 +2,12 @@
 
 #include <stdlib.h>
 
-#define LINK_OFFSET(type) ((size_t) &((type *)0)->link)
-#define UPCAST(ptr, type) ({ \
-	const typeof( ((type *)0)->link ) *__mptr = (ptr); \
-	(type *)( (char *)__mptr - LINK_OFFSET(type) ); })
+#define LINK_OFFSET(type, member) ((size_t) &((type *)0)->member)
+#define LINK_UPCAST(ptr, type, member) ({ \
+	const typeof( ((type *)0)->member ) *__mptr = (ptr); \
+	(type *)( (char *)__mptr - LINK_OFFSET(type, member) ); })
 
 #define LINK_EMPTY ((struct link) { 0 })
-
-#define LINK(p) (&(p)->link)
 
 #define LIST_INNER(list, link) \
 	(((link) != &(list)->head) && ((link) != &(list)->tail))

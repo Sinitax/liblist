@@ -30,12 +30,11 @@ include $(DEPS)
 
 build/liblist.a: $(OBJS) | build
 	$(CC) -o build/tmp.o $(OBJS) $(CFLAGS) -r
-	objcopy --keep-global-symbols=liblist.abi build/tmp.o build/fixed.o
+	objcopy --keep-global-symbols=liblist.api build/tmp.o build/fixed.o
 	ar rcs $@ build/fixed.o
 
 build/liblist.so: $(PI_OBJS) | build
-	$(CC) -o build/tmp.so $(PI_OBJS) $(CFLAGS) -shared
-	objcopy --keep-global-symbols=liblist.abi build/tmp.so $@
+	$(CC) -o $@ $(PI_OBJS) $(CFLAGS) -shared -Wl,-version-script liblist.lds
 
 build/test: src/test.c build/liblist.a | build
 	$(CC) -o $@ $^ -I include

@@ -9,8 +9,8 @@
 
 #define LINK_EMPTY ((struct link) { 0 })
 
-#define LIST_INNER(list, link) \
-	(((link) != &(list)->head) && ((link) != &(list)->tail))
+#define LIST_INNER(link) \
+	((link) != NULL && (link)->prev != NULL && (link)->next != NULL)
 
 #define LIST_ITER(list, iter) (iter) = (list)->head.next; \
 	(iter) != &(list)->tail; (iter) = (iter)->next

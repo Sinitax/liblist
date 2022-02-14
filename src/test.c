@@ -24,7 +24,7 @@ main(int argc, const char **argv)
 		if (!item) return 0;
 		item->str = *arg;
 		item->link = LINK_EMPTY;
-		list_push_back(&list, LINK(item));
+		list_push_back(&list, &item->link);
 	}
 
 	for (LIST_ITER(&list, iter)) {

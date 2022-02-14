@@ -1,28 +1,30 @@
 #include "list.h"
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 #define ASSERT(x) assert((x), __FILE__, __LINE__, #x)
 
-static void assert(int cond, const char *file, int line, const char *condstr);
+static void assert(bool cond, const char *file, size_t line, const char *condstr);
 static struct link *link_iter_fwd(struct link *link, size_t n);
 static struct link *link_iter_bwd(struct link *link, size_t n);
 
 void
-assert(int cond, const char *file, int line, const char *condstr)
+assert(bool cond, const char *file, size_t line, const char *condstr)
 {
 	if (cond) return;
 
-	fprintf(stderr, "CLIST: Assertion failed at %s:%i (%s)\n",
+	fprintf(stderr, "CLIST: Assertion failed at %s:%li (%s)\n",
 		file, line, condstr);
+
 	exit(1);
 }
 
 struct link *
 link_iter_fwd(struct link *link, size_t n)
 {
-	int i;
+	size_t i;
 
 	ASSERT(link != NULL);
 
@@ -37,7 +39,7 @@ link_iter_fwd(struct link *link, size_t n)
 struct link *
 link_iter_bwd(struct link *link, size_t n)
 {
-	int i;
+	size_t i;
 
 	ASSERT(link != NULL);
 
@@ -74,7 +76,7 @@ list_free(struct list *list, void (*free_item)(void *), int offset)
 	}
 }
 
-int
+bool
 list_empty(struct list *list)
 {
 	ASSERT(list != NULL);
@@ -82,11 +84,11 @@ list_empty(struct list *list)
 	return list->head.next == &list->tail;
 }
 
-int
+size_t
 list_len(struct list *list)
 {
 	struct link *iter;
-	int len;
+	size_t len;
 
 	ASSERT(list != NULL);
 

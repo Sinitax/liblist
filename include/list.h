@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdbool.h>
 #include <stdlib.h>
 
 #define LINK_OFFSET(type, member) ((size_t) &((type *)0)->member)
@@ -30,8 +31,8 @@ struct list {
 void list_init(struct list *list);
 void list_free(struct list *list, void (*free_item)(void *), int offset);
 
-int list_empty(struct list *list);
-int list_len(struct list *list);
+bool list_empty(struct list *list);
+size_t list_len(struct list *list);
 
 struct link *list_at(struct list *list, int n);
 struct link *list_front(struct list *list);

@@ -113,7 +113,7 @@ list_at(struct list *list, int n)
 struct link *
 list_front(struct list *list)
 {
-	return list_at(list, 1);
+	return list_at(list, 0);
 }
 
 struct link *

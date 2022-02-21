@@ -87,16 +87,57 @@ list_empty(struct list *list)
 size_t
 list_len(struct list *list)
 {
-	struct link *iter;
-	size_t len;
+	struct link *link;
+	int len;
 
 	ASSERT(list != NULL);
 
 	len = 0;
-	for (LIST_ITER(list, iter))
+	for (LIST_ITER(list, link))
 		len += 1;
 
 	return len;
+}
+
+void
+list_sort(struct list *list, int (*compare)(struct link *a, struct link *b))
+{
+	struct link *link, *cmp, *next;
+
+	ASSERT(list != NULL && cmp != NULL);
+
+	/* Simple Insertion Sort */
+	/* cmp(a,b) -> (a-b) */
+
+	link = list->head.next;
+	while (LIST_INNER(link)) {
+		next = link->next;
+		cmp = link->prev;
+		while (LIST_INNER(cmp)) {
+			if (compare(cmp, link) < 0) {
+				link_append(cmp, link_pop(link));
+				break;
+			}
+			cmp = cmp->prev;
+		}
+		link = next;
+	}
+}
+
+int
+list_index(struct list *list, struct link *target)
+{
+	struct link *link;
+	int index;
+
+	index = 0;
+	for (LIST_ITER(list, link)) {
+		if (link == target)
+			return index;
+		index++;
+	}
+
+	return -1;
 }
 
 struct link *

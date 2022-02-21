@@ -6,6 +6,10 @@ LIBLIST_1.0 {
 		list_empty;
 		list_len;
 
+		list_sort;
+
+		list_index;
+
 		list_at;
 		list_front;
 		list_back;

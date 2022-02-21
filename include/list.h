@@ -29,10 +29,16 @@ struct list {
 };
 
 void list_init(struct list *list);
-void list_free(struct list *list, void (*free_item)(void *), int offset);
+void list_free(struct list *list,
+	void (*free_item)(void *), int offset);
 
 bool list_empty(struct list *list);
 size_t list_len(struct list *list);
+
+void list_sort(struct list *list,
+	int (*compare)(struct link *a, struct link *b));
+
+int list_index(struct list *list, struct link *link);
 
 struct link *list_at(struct list *list, int n);
 struct link *list_front(struct list *list);

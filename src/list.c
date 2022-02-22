@@ -88,7 +88,7 @@ size_t
 list_len(struct list *list)
 {
 	struct link *link;
-	int len;
+	size_t len;
 
 	ASSERT(list != NULL);
 

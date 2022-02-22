@@ -104,7 +104,7 @@ list_sort(struct list *list, int (*compare)(struct link *a, struct link *b))
 {
 	struct link *link, *cmp, *next;
 
-	ASSERT(list != NULL && cmp != NULL);
+	ASSERT(list != NULL && compare != NULL);
 
 	/* Simple Insertion Sort */
 	/* cmp(a,b) -> (a-b) */

@@ -143,12 +143,16 @@ list_index(struct list *list, struct link *target)
 struct link *
 list_at(struct list *list, int n)
 {
+	struct link * link;
+
 	ASSERT(list != NULL);
 
 	if (n >= 0)
-		return link_iter_fwd(list->head.next, n);
+		link = link_iter_fwd(list->head.next, n);
 	else
-		return link_iter_bwd(&list->tail, -n);
+		link = link_iter_bwd(&list->tail, -n);
+
+	return LIST_INNER(link) ? link : NULL;
 }
 
 struct link *

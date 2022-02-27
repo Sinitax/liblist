@@ -6,7 +6,9 @@
 
 #define ASSERT(x) assert((x), __FILE__, __LINE__, #x)
 
-static void assert(bool cond, const char *file, size_t line, const char *condstr);
+static void assert(bool cond, const char *file,
+	size_t line, const char *condstr);
+
 static struct link *link_iter_fwd(struct link *link, size_t n);
 static struct link *link_iter_bwd(struct link *link, size_t n);
 
@@ -76,6 +78,15 @@ list_free(struct list *list, void (*free_item)(void *), int offset)
 	}
 }
 
+void
+list_clear(struct list *list)
+{
+	ASSERT(list != NULL);
+
+	while (!list_empty(list))
+		list_pop_back(list);
+}
+
 bool
 list_empty(struct list *list)
 {
@@ -97,6 +108,22 @@ list_len(struct list *list)
 		len += 1;
 
 	return len;
+}
+
+void
+list_insert_sorted(struct list *list, struct link *insert,
+	int (*compare)(struct link *a, struct link *b))
+{
+	struct link *link;
+
+	ASSERT(list != NULL && link != NULL && compare != NULL);
+
+	for (LIST_ITER(list, link)) {
+		if (compare(insert, link) > 0) {
+			link_append(link, insert);
+			break;
+		}
+	}
 }
 
 void
@@ -229,6 +256,14 @@ link_append(struct link *cur, struct link *link)
 		link->next->prev = link;
 }
 
+bool
+link_inuse(struct link *link)
+{
+	ASSERT(link != NULL);
+
+	return link->prev != NULL && link->next != NULL;
+}
+
 struct link *
 link_iter(struct link *link, int n)
 {
@@ -247,6 +282,7 @@ link_pop(struct link *link)
 		link->prev->next = link->next;
 	if (link->next)
 		link->next->prev = link->prev;
+	*link = LINK_EMPTY;
 
 	return link;
 }

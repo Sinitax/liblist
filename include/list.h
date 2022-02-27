@@ -32,9 +32,13 @@ void list_init(struct list *list);
 void list_free(struct list *list,
 	void (*free_item)(void *), int offset);
 
+void list_clear(struct list *list);
+
 bool list_empty(struct list *list);
 size_t list_len(struct list *list);
 
+void list_insert_sorted(struct list *list, struct link *link,
+	int (*compare)(struct link *a, struct link *b));
 void list_sort(struct list *list,
 	int (*compare)(struct link *a, struct link *b));
 
@@ -51,6 +55,8 @@ struct link *list_pop_back(struct list *list);
 
 struct link *link_iter(struct link *link, int n);
 struct link *link_pop(struct link *link);
+
+bool link_inuse(struct link *link);
 
 void link_prepend(struct link *list, struct link *link);
 void link_append(struct link *list, struct link *link);

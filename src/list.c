@@ -116,14 +116,19 @@ list_insert_sorted(struct list *list, struct link *insert,
 {
 	struct link *link;
 
-	ASSERT(list != NULL && link != NULL && compare != NULL);
+	ASSERT(list != NULL && insert != NULL && compare != NULL);
+
+	/* Simple Insertion Sort */
+	/* cmp(a,b) -> (a-b) */
 
 	for (LIST_ITER(list, link)) {
-		if (compare(insert, link) > 0) {
-			link_append(link, insert);
-			break;
+		if (compare(link, insert) >= 0) {
+			link_prepend(link, insert);
+			return;
 		}
 	}
+
+	list_push_back(list, insert);
 }
 
 void

@@ -111,18 +111,18 @@ list_len(struct list *list)
 }
 
 void
-list_insert_sorted(struct list *list, struct link *insert,
-	int (*compare)(struct link *a, struct link *b))
+list_insert_sorted(struct list *list, struct link *insert, bool ascending,
+	bool (*in_order)(struct link *a, struct link *b))
 {
 	struct link *link;
 
-	ASSERT(list != NULL && insert != NULL && compare != NULL);
+	ASSERT(list != NULL && insert != NULL && in_order != NULL);
 
 	/* Simple Insertion Sort */
 	/* cmp(a,b) -> (a-b) */
 
 	for (LIST_ITER(list, link)) {
-		if (compare(link, insert) >= 0) {
+		if (ascending == in_order(insert, link)) {
 			link_prepend(link, insert);
 			return;
 		}
@@ -132,26 +132,25 @@ list_insert_sorted(struct list *list, struct link *insert,
 }
 
 void
-list_sort(struct list *list, int (*compare)(struct link *a, struct link *b))
+list_sort(struct list *list, bool ascending,
+	bool (*in_order)(struct link *a, struct link *b))
 {
 	struct link *link, *cmp, *next;
 
-	ASSERT(list != NULL && compare != NULL);
+	ASSERT(list != NULL && in_order != NULL);
 
-	/* Simple Insertion Sort */
-	/* cmp(a,b) -> (a-b) */
-
+	/* Insertion Sort */
 	link = list->head.next;
 	while (LIST_INNER(link)) {
 		next = link->next;
 		cmp = link->prev;
 		while (LIST_INNER(cmp)) {
-			if (compare(cmp, link) < 0) {
-				link_append(cmp, link_pop(link));
+			if (ascending == in_order(cmp, link))
 				break;
-			}
 			cmp = cmp->prev;
 		}
+		if (cmp != link->prev)
+			link_append(cmp, link_pop(link));
 		link = next;
 	}
 }

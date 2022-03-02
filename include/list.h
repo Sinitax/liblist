@@ -37,10 +37,10 @@ void list_clear(struct list *list);
 bool list_empty(struct list *list);
 size_t list_len(struct list *list);
 
-void list_insert_sorted(struct list *list, struct link *link,
-	int (*compare)(struct link *a, struct link *b));
-void list_sort(struct list *list,
-	int (*compare)(struct link *a, struct link *b));
+void list_insert_sorted(struct list *list, struct link *link, bool ascending,
+	bool (*in_order)(struct link *a, struct link *b));
+void list_sort(struct list *list, bool ascending,
+	bool (*in_order)(struct link *a, struct link *b));
 
 int list_index(struct list *list, struct link *link);
 

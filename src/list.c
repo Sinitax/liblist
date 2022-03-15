@@ -111,7 +111,7 @@ list_len(struct list *list)
 }
 
 void
-list_insert_sorted(struct list *list, struct link *insert, bool ascending,
+list_insert_sorted(struct list *list, struct link *insert, bool reverse,
 	bool (*in_order)(struct link *a, struct link *b))
 {
 	struct link *link;
@@ -122,7 +122,7 @@ list_insert_sorted(struct list *list, struct link *insert, bool ascending,
 	/* cmp(a,b) -> (a-b) */
 
 	for (LIST_ITER(list, link)) {
-		if (ascending == in_order(insert, link)) {
+		if (in_order(insert, link) == !reverse) {
 			link_prepend(link, insert);
 			return;
 		}
@@ -132,7 +132,7 @@ list_insert_sorted(struct list *list, struct link *insert, bool ascending,
 }
 
 void
-list_sort(struct list *list, bool ascending,
+list_sort(struct list *list, bool reverse,
 	bool (*in_order)(struct link *a, struct link *b))
 {
 	struct link *link, *cmp, *next;
@@ -145,7 +145,7 @@ list_sort(struct list *list, bool ascending,
 		next = link->next;
 		cmp = link->prev;
 		while (LIST_INNER(cmp)) {
-			if (ascending == in_order(cmp, link))
+			if (in_order(cmp, link) == !reverse)
 				break;
 			cmp = cmp->prev;
 		}

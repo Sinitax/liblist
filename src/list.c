@@ -4,15 +4,31 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifdef LIBLIST_CHECK_ENABLE
+#define LIBLIST_CHECK(x) liblist_assert((x), __FILE__, __LINE__, #x)
+#else
+#define LIBLIST_CHECK(x)
+#endif
+
 static struct link *link_iter_fwd(struct link *link, size_t n);
 static struct link *link_iter_bwd(struct link *link, size_t n);
+
+static inline void
+liblist_assert(int cond, const char *file, int line, const char *condstr)
+{
+	if (cond) return;
+
+	fprintf(stderr, "liblist: Assertion failed at %s:%i (%s)\n",
+		file, line, condstr);
+	abort();
+}
 
 struct link *
 link_iter_fwd(struct link *link, size_t n)
 {
 	size_t i;
 
-	LIBLIST_ASSERT(link != NULL);
+	LIBLIST_CHECK(link != NULL);
 
 	for (i = 0; i < n; i++) {
 		if (!link) return NULL;
@@ -27,7 +43,7 @@ link_iter_bwd(struct link *link, size_t n)
 {
 	size_t i;
 
-	LIBLIST_ASSERT(link != NULL);
+	LIBLIST_CHECK(link != NULL);
 
 	for (i = 0; i < n; i++) {
 		if (!link) return NULL;
@@ -40,7 +56,7 @@ link_iter_bwd(struct link *link, size_t n)
 void
 list_init(struct list *list)
 {
-	LIBLIST_ASSERT(list != NULL);
+	LIBLIST_CHECK(list != NULL);
 
 	list->head.prev = NULL;
 	list->head.next = &list->tail;
@@ -53,7 +69,7 @@ list_free(struct list *list, void (*free_item)(void *), int offset)
 {
 	struct link *item;
 
-	LIBLIST_ASSERT(list != NULL && free_item != NULL);
+	LIBLIST_CHECK(list != NULL && free_item != NULL);
 
 	while (!list_empty(list)) {
 		item = link_pop(list->head.next);
@@ -64,7 +80,7 @@ list_free(struct list *list, void (*free_item)(void *), int offset)
 void
 list_clear(struct list *list)
 {
-	LIBLIST_ASSERT(list != NULL);
+	LIBLIST_CHECK(list != NULL);
 
 	while (!list_empty(list))
 		list_pop_back(list);
@@ -73,7 +89,7 @@ list_clear(struct list *list)
 bool
 list_empty(struct list *list)
 {
-	LIBLIST_ASSERT(list != NULL);
+	LIBLIST_CHECK(list != NULL);
 
 	return list->head.next == &list->tail;
 }
@@ -84,7 +100,7 @@ list_len(struct list *list)
 	struct link *link;
 	size_t len;
 
-	LIBLIST_ASSERT(list != NULL);
+	LIBLIST_CHECK(list != NULL);
 
 	len = 0;
 	for (LIST_ITER(list, link))
@@ -99,7 +115,7 @@ list_insert_sorted(struct list *list, struct link *insert, bool reverse,
 {
 	struct link *link;
 
-	LIBLIST_ASSERT(list != NULL && insert != NULL && in_order != NULL);
+	LIBLIST_CHECK(list != NULL && insert != NULL && in_order != NULL);
 
 	/* Simple Insertion Sort */
 	/* cmp(a,b) -> (a-b) */
@@ -120,7 +136,7 @@ list_sort(struct list *list, bool reverse,
 {
 	struct link *link, *cmp, *next;
 
-	LIBLIST_ASSERT(list != NULL && in_order != NULL);
+	LIBLIST_CHECK(list != NULL && in_order != NULL);
 
 	/* Insertion Sort */
 	link = list->head.next;
@@ -159,7 +175,7 @@ list_at(struct list *list, int n)
 {
 	struct link * link;
 
-	LIBLIST_ASSERT(list != NULL);
+	LIBLIST_CHECK(list != NULL);
 
 	if (n >= 0)
 		link = link_iter_fwd(list->head.next, n);
@@ -196,7 +212,7 @@ list_push_back(struct list *list, struct link *link)
 struct link *
 list_pop_front(struct list *list)
 {
-	LIBLIST_ASSERT(list != NULL);
+	LIBLIST_CHECK(list != NULL);
 
 	if (list_empty(list))
 		return NULL;
@@ -207,7 +223,7 @@ list_pop_front(struct list *list)
 struct link *
 list_pop_back(struct list *list)
 {
-	LIBLIST_ASSERT(list != NULL);
+	LIBLIST_CHECK(list != NULL);
 
 	if (list_empty(list))
 		return NULL;
@@ -218,7 +234,7 @@ list_pop_back(struct list *list)
 void
 link_prepend(struct link *cur, struct link *link)
 {
-	LIBLIST_ASSERT(cur != NULL && link != NULL);
+	LIBLIST_CHECK(cur != NULL && link != NULL);
 
 	link->prev = cur->prev;
 	link->next = cur;
@@ -232,7 +248,7 @@ link_prepend(struct link *cur, struct link *link)
 void
 link_append(struct link *cur, struct link *link)
 {
-	LIBLIST_ASSERT(cur != NULL && link != NULL);
+	LIBLIST_CHECK(cur != NULL && link != NULL);
 
 	link->prev = cur;
 	link->next = cur->next;
@@ -246,7 +262,7 @@ link_append(struct link *cur, struct link *link)
 bool
 link_inuse(struct link *link)
 {
-	LIBLIST_ASSERT(link != NULL);
+	LIBLIST_CHECK(link != NULL);
 
 	return link->prev != NULL && link->next != NULL;
 }
@@ -263,7 +279,7 @@ link_iter(struct link *link, int n)
 struct link *
 link_pop(struct link *link)
 {
-	LIBLIST_ASSERT(link != NULL);
+	LIBLIST_CHECK(link != NULL);
 
 	if (link->prev)
 		link->prev->next = link->next;

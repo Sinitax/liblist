@@ -3,26 +3,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#ifdef LIBLIST_ASSERT_ENABLE
-
-#include <stdio.h>
-
-#define LIBLIST_ASSERT(x) liblist_assert((x), __FILE__, __LINE__, #x)
-
-static inline void liblist_assert(int cond,
-	const char *file, int line, const char *condstr)
-{
-	if (cond) return;
-
-	fprintf(stderr, "liblist: Assertion failed at %s:%i (%s)\n",
-		file, line, condstr);
-	abort();
-}
-
-#else
-#define LIBLIST_ASSERT(x)
-#endif
-
 #define LINK_OFFSET(type, member) ((size_t) &((type *)0)->member)
 #define LINK_UPCAST(ptr, type, member) ({ \
 	const typeof( ((type *)0)->member ) *__mptr = (ptr); \

@@ -31,10 +31,12 @@ main(int argc, const char **argv)
 
 	list_init(&list);
 
-	if (argc < 3)
+	if (argc < 3) {
+		fprintf(stderr, "Usage: test REVERSE [STR]..\n");
 		return 1;
+	}
 
-	for (arg = &argv[2]; *arg; arg++) {
+	for (arg = argv + 2; *arg; arg++) {
 		item = malloc(sizeof(struct arg));
 		if (!item) return 0;
 		item->str = *arg;

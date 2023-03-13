@@ -1,11 +1,11 @@
+PREFIX ?= /usr/local
+LIBDIR ?= /lib
+INCLDIR ?= /include
+
 CFLAGS = -I src -I include
 
-ifeq "$(LIBLIST_DEBUG)" "1"
-CFLAGS += -g
-endif
-
-ifeq "$(LIBLIST_ASSERT)" "1"
-CFLAGS += -DLIBLIST_ASSERT_ENABLE=1
+ifeq "$(DEBUG)" "1"
+CFLAGS += -g -DLIBLIST_CHECK_ENABLE=1
 endif
 
 all: build/liblist.so build/liblist.a build/test
@@ -28,12 +28,12 @@ build/test: src/test.c build/liblist.a | build
 	$(CC) -o $@ $^ -I include
 
 install:
-	install -m644 include/list.h -t "$(DESTDIR)$(PREFIX)$(INCLUDEDIR)"
+	install -m644 include/list.h -t "$(DESTDIR)$(PREFIX)$(INCLDIR)"
 	install -m755 build/liblist.a -t "$(DESTDIR)$(PREFIX)$(LIBDIR)"
 	install -m755 build/liblist.so -t "$(DESTDIR)$(PREFIX)$(LIBDIR)"
 
 uninstall:
-	rm -f "$(DESTDIR)$(PREFIX)$(INCLUDEDIR)/list.h"
+	rm -f "$(DESTDIR)$(PREFIX)$(INCLDIR)/list.h"
 	rm -f "$(DESTDIR)$(PREFIX)$(LIBDIR)/liblist.a"
 	rm -f "$(DESTDIR)$(PREFIX)$(LIBDIR)/liblist.so"
 

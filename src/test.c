@@ -7,16 +7,16 @@
 struct arg {
 	const char *str;
 
-	struct link link;
+	struct list_link link;
 };
 
 bool
-test_sort(struct link *link1, struct link *link2)
+test_sort(struct list_link *link1, struct list_link *link2)
 {
 	struct arg *arg1, *arg2;
 
-	arg1 = LINK_UPCAST(link1, struct arg, link);
-	arg2 = LINK_UPCAST(link2, struct arg, link);
+	arg1 = LIST_UPCAST(link1, struct arg, link);
+	arg2 = LIST_UPCAST(link2, struct arg, link);
 
 	return strcmp(arg1->str, arg2->str) <= 0;
 }
@@ -24,7 +24,7 @@ test_sort(struct link *link1, struct link *link2)
 int
 main(int argc, const char **argv)
 {
-	struct link *iter;
+	struct list_link *iter;
 	struct list list;
 	struct arg *item;
 	const char **arg;
@@ -40,14 +40,16 @@ main(int argc, const char **argv)
 		item = malloc(sizeof(struct arg));
 		if (!item) return 0;
 		item->str = *arg;
-		item->link = LINK_EMPTY;
+		item->link = LIST_LINK_INIT;
 		list_push_back(&list, &item->link);
 	}
 
-	list_sort(&list, atoi(argv[1]), test_sort);
+	list_insertion_sort(&list, atoi(argv[1]), test_sort);
 
 	for (LIST_ITER(&list, iter)) {
-		item = LINK_UPCAST(iter, struct arg, link);
+		item = LIST_UPCAST(iter, struct arg, link);
 		printf("%s\n", item->str);
 	}
+
+	list_free_items(&list, free, LIST_OFFSET(struct arg, link));
 }

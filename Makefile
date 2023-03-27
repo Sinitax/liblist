@@ -2,10 +2,18 @@ PREFIX ?= /usr/local
 LIBDIR ?= /lib
 INCLDIR ?= /include
 
-CFLAGS = -I src -I include
+CFLAGS = -I include
+CFLAGS += -Wunused-function -Wunused-variable -Wno-prototype
+CFLAGS += -Wconversion -Wsign-compare -Werror
 
 ifeq "$(DEBUG)" "1"
-CFLAGS += -g -DLIBLIST_CHECK_ENABLE=1
+CFLAGS += -Og -g
+else
+CFLAGS += -O2
+endif
+
+ifeq "$(ASSERT_ARGS)" "1"
+CFLAGS += -DLIBLIST_ASSERT_ARGS=1
 endif
 
 all: build/liblist.so build/liblist.a build/test
@@ -16,12 +24,12 @@ clean:
 build:
 	mkdir build
 
-build/liblist.a: src/list.c include/list.h | build
+build/liblist.a: src/list.c include/list.h liblist.api | build
 	$(CC) -o build/tmp.o src/list.c $(CFLAGS) -r
 	objcopy --keep-global-symbols=liblist.api build/tmp.o build/fixed.o
 	ar rcs $@ build/fixed.o
 
-build/liblist.so: src/list.c include/list.h | build
+build/liblist.so: src/list.c include/list.h liblist.lds | build
 	$(CC) -o $@ src/list.c $(CFLAGS) -shared -Wl,-version-script liblist.lds
 
 build/test: src/test.c build/liblist.a | build

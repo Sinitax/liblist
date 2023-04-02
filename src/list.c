@@ -67,47 +67,6 @@ list_index(const struct list *list, const struct list_link *target)
 	return -1;
 }
 
-void
-list_insert_sorted(struct list *list, struct list_link *insert, bool reverse,
-	bool (*in_order)(struct list_link *a, struct list_link *b))
-{
-	struct list_link *link;
-
-	LIST_ABORT_ON_ARGS(!list || !insert || !in_order);
-
-	for (LIST_ITER(list, link)) {
-		if (in_order(insert, link) == !reverse) {
-			list_link_prepend(link, insert);
-			return;
-		}
-	}
-
-	list_push_back(list, insert);
-}
-
-void
-list_insertion_sort(struct list *list, bool reverse,
-	bool (*in_order)(struct list_link *a, struct list_link *b))
-{
-	struct list_link *link, *cmp, *next;
-
-	LIST_ABORT_ON_ARGS(!list || !in_order);
-
-	link = list->head.next;
-	while (LIST_INNER(link)) {
-		next = link->next;
-		cmp = link->prev;
-		while (LIST_INNER(cmp)) {
-			if (in_order(cmp, link) == !reverse)
-				break;
-			cmp = cmp->prev;
-		}
-		if (cmp != link->prev)
-			list_link_append(cmp, list_link_pop(link));
-		link = next;
-	}
-}
-
 struct list_link *
 list_at(struct list *list, size_t n)
 {
@@ -130,6 +89,47 @@ list_at_back(struct list *list, size_t n)
 	link = list_iter_bwd(&list->tail, n);
 
 	return LIST_INNER(link) ? link : NULL;
+}
+
+void
+list_insert_sorted(struct list *list, struct list_link *insert, bool reverse,
+	bool (*in_order)(const struct list_link *a, const struct list_link *b))
+{
+	struct list_link *link;
+
+	LIST_ABORT_ON_ARGS(!list || !insert || !in_order);
+
+	for (LIST_ITER(list, link)) {
+		if (in_order(insert, link) == !reverse) {
+			list_link_prepend(link, insert);
+			return;
+		}
+	}
+
+	list_insert_back(list, insert);
+}
+
+void
+list_insertion_sort(struct list *list, bool reverse,
+	bool (*in_order)(const struct list_link *a, const struct list_link *b))
+{
+	struct list_link *link, *cmp, *next;
+
+	LIST_ABORT_ON_ARGS(!list || !in_order);
+
+	link = list->head.next;
+	while (LIST_INNER(link)) {
+		next = link->next;
+		cmp = link->prev;
+		while (LIST_INNER(cmp)) {
+			if (in_order(cmp, link) == !reverse)
+				break;
+			cmp = cmp->prev;
+		}
+		if (cmp != link->prev)
+			list_link_append(cmp, list_link_pop(link));
+		link = next;
+	}
 }
 
 struct list_link *

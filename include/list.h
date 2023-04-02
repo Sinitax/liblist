@@ -48,16 +48,16 @@ static inline bool list_empty(const struct list *list);
 size_t list_len(const struct list *list);
 ssize_t list_index(const struct list *list, const struct list_link *link);
 
-void list_insert_sorted(struct list *list, struct list_link *link, bool reverse,
-	bool (*in_order)(struct list_link *a, struct list_link *b));
-void list_insertion_sort(struct list *list, bool reverse,
-	bool (*in_order)(struct list_link *a, struct list_link *b));
-
 struct list_link *list_at(struct list *list, size_t n);
 struct list_link *list_at_back(struct list *list, size_t n);
 
-static inline void list_push_front(struct list *list, struct list_link *link);
-static inline void list_push_back(struct list *list, struct list_link *link);
+void list_insert_sorted(struct list *list, struct list_link *link, bool reverse,
+	bool (*in_order)(const struct list_link *a, const struct list_link *b));
+void list_insertion_sort(struct list *list, bool reverse,
+	bool (*in_order)(const struct list_link *a, const struct list_link *b));
+static inline void list_insert_front(struct list *list, struct list_link *link);
+static inline void list_insert_back(struct list *list, struct list_link *link);
+
 struct list_link *list_pop_front(struct list *list);
 struct list_link *list_pop_back(struct list *list);
 
@@ -111,7 +111,7 @@ list_link_inuse(const struct list_link *link)
 }
 
 static inline void
-list_push_front(struct list *list, struct list_link *link)
+list_insert_front(struct list *list, struct list_link *link)
 {
 	LIST_ABORT_ON_ARGS(!list);
 
@@ -119,7 +119,7 @@ list_push_front(struct list *list, struct list_link *link)
 }
 
 static inline void
-list_push_back(struct list *list, struct list_link *link)
+list_insert_back(struct list *list, struct list_link *link)
 {
 	LIST_ABORT_ON_ARGS(!list);
 

@@ -6,9 +6,8 @@
 #define LIST_LINK_INIT ((struct list_link) { 0 })
 
 #define LIST_OFFSET(type, member) ((size_t) &((type *)0)->member)
-#define LIST_UPCAST(ptr, type, member) ({ \
-	const typeof( ((type *)0)->member ) *__mptr = (ptr); \
-	(type *)( (char *)__mptr - LIST_OFFSET(type, member) ); })
+#define LIST_UPCAST(ptr, type, member) \
+	((type *)((char *)ptr - LIST_OFFSET(type, member)))
 
 #define LIST_INNER(link) ((link) != NULL && \
 	(link)->prev != NULL && (link)->next != NULL)

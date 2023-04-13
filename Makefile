@@ -2,7 +2,7 @@ PREFIX ?= /usr/local
 LIBDIR ?= /lib
 INCLDIR ?= /include
 
-CFLAGS = -I include
+CFLAGS = -I include -std=c99
 CFLAGS += -Wunused-function -Wunused-variable -Wno-prototype
 CFLAGS += -Wconversion -Wsign-compare -Werror
 

@@ -11,9 +11,9 @@ struct arg {
 };
 
 bool
-test_sort(struct list_link *link1, struct list_link *link2)
+test_sort(const struct list_link *link1, const struct list_link *link2)
 {
-	struct arg *arg1, *arg2;
+	const struct arg *arg1, *arg2;
 
 	arg1 = LIST_UPCAST(link1, struct arg, link);
 	arg2 = LIST_UPCAST(link2, struct arg, link);
@@ -41,7 +41,7 @@ main(int argc, const char **argv)
 		if (!item) return 0;
 		item->str = *arg;
 		item->link = LIST_LINK_INIT;
-		list_push_back(&list, &item->link);
+		list_insert_back(&list, &item->link);
 	}
 
 	list_insertion_sort(&list, atoi(argv[1]), test_sort);

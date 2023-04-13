@@ -196,30 +196,3 @@ list_iter_bwd(struct list_link *link, size_t n)
 	return link;
 }
 
-void
-list_link_prepend(struct list_link *cur, struct list_link *link)
-{
-	LIST_ABORT_ON_ARGS(!cur || !link);
-
-	link->prev = cur->prev;
-	link->next = cur;
-
-	if (link->prev)
-		link->prev->next = link;
-	if (link->next)
-		link->next->prev = link;
-}
-
-void
-list_link_append(struct list_link *cur, struct list_link *link)
-{
-	LIST_ABORT_ON_ARGS(!cur || !link);
-
-	link->prev = cur;
-	link->next = cur->next;
-
-	if (link->prev)
-		link->prev->next = link;
-	if (link->next)
-		link->next->prev = link;
-}

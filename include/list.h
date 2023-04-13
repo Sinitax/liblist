@@ -1,7 +1,8 @@
 #pragma once
 
 #include <stdbool.h>
-#include <stdlib.h>
+#include <sys/types.h>
+#include <stddef.h>
 
 #define LIST_LINK_INIT ((struct list_link) { 0 })
 
@@ -66,8 +67,14 @@ struct list_link *list_link_pop(struct list_link *link);
 struct list_link *list_iter_fwd(struct list_link *link, size_t n);
 struct list_link *list_iter_bwd(struct list_link *link, size_t n);
 
-void list_link_prepend(struct list_link *list, struct list_link *link);
-void list_link_append(struct list_link *list, struct list_link *link);
+static inline void list_link_prepend(struct list_link *a, struct list_link *b);
+static inline void list_link_append(struct list_link *a, struct list_link *b);
+
+static inline void list_link_attach_next(struct list_link *a, struct list_link *b);
+static inline void list_link_attach_prev(struct list_link *a, struct list_link *b);
+
+static inline void list_link_detach_next(struct list_link *link);
+static inline void list_link_detach_prev(struct list_link *link);
 
 static inline struct list_link *
 list_front(const struct list *list)
@@ -125,3 +132,60 @@ list_insert_back(struct list *list, struct list_link *link)
 	list_link_prepend(&list->tail, link);
 }
 
+/* attach b before a: b -> a */
+static inline void
+list_link_prepend(struct list_link *a, struct list_link *b)
+{
+	list_link_attach_prev(a, b);
+}
+
+/* attach b after a: a -> b */
+static inline void
+list_link_append(struct list_link *a, struct list_link *b)
+{
+	list_link_attach_next(a, b);
+}
+
+/* attach b before a: b -> a */
+static inline void
+list_link_attach_prev(struct list_link *a, struct list_link *b)
+{
+	LIST_ABORT_ON_ARGS(!a || !b);
+
+	b->prev = a->prev;
+	b->next = a;
+
+	if (b->prev) b->prev->next = b;
+	a->prev = b;
+}
+
+/* attach b after a: a -> b */
+static inline void
+list_link_attach_next(struct list_link *a, struct list_link *b)
+{
+	LIST_ABORT_ON_ARGS(!a || !b);
+
+	b->next = a->next;
+	b->prev = a;
+
+	if (b->next) b->next->prev = b;
+	a->next = b;
+}
+
+static inline void
+list_link_detach_next(struct list_link *link)
+{
+	LIST_ABORT_ON_ARGS(!link);
+
+	if (link->next) link->next->prev = NULL;
+	link->next = NULL;
+}
+
+static inline void
+list_link_detach_prev(struct list_link *link)
+{
+	LIST_ABORT_ON_ARGS(!link);
+
+	if (link->prev) link->prev->next = NULL;
+	link->prev = NULL;
+}

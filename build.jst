@@ -1,0 +1,35 @@
+CC = gcc
+
+cflags = -Wunused-function -Wunused-variable -Wconversion
+		-I include
+
+rule liba
+	$CC -o $out.tmp.o $in $cflags -r
+	objcopy --keep-global-symbols=liblist.api $out.tmp.o $out.fixed.o
+	ar rcs $out $out.fixed.o
+	rm $out.tmp.o $out.fixed.o
+
+rule libso
+	$CC -o $out $in $cflags -shared -Wl,-version-script liblist.lds
+
+rule cc
+	$CC -o $out $in $cflags
+
+rule mkdir
+	mkdir $out
+
+target build
+	mkdir
+
+target build/liblist.a
+	liba src/list.c
+
+target build/liblist.so
+	libso src/list.c
+
+target build/test
+	cc src/test.c build/liblist.a
+
+target all
+	file build build/liblist.a build/liblist.so build/test
+
